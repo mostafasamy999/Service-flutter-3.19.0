@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -20,29 +22,14 @@ class PermissionService {
     }
   }
 
-  /// Request location permissions (basic and background)
+  /// Request location permissions (iOS-compatible approach)
   static Future<LocationPermissionResult> requestLocationPermissions() async {
     try {
-      // Request basic location permission first
-      final locationStatus = await Permission.location.request();
-
-      if (locationStatus != PermissionStatus.granted) {
-        return LocationPermissionResult(
-          hasLocation: false,
-          hasBackgroundLocation: false,
-          message: _getLocationErrorMessage(locationStatus),
-        );
+      if (Platform.isIOS) {
+        return await _requestiOSLocationPermissions();
+      } else {
+        return await _requestAndroidLocationPermissions();
       }
-
-      // Request background location permission
-      final backgroundStatus = await Permission.locationAlways.request();
-
-      return LocationPermissionResult(
-        hasLocation: true,
-        hasBackgroundLocation: backgroundStatus == PermissionStatus.granted,
-        message: _getBackgroundLocationMessage(backgroundStatus),
-      );
-
     } catch (e) {
       debugPrint('Error requesting location permissions: $e');
       return LocationPermissionResult(
@@ -52,6 +39,59 @@ class PermissionService {
       );
     }
   }
+
+  /// iOS-specific location permission request
+  static Future<LocationPermissionResult> _requestiOSLocationPermissions() async {
+    // Step 1: Request basic location permission first
+    final locationStatus = await Permission.location.request();
+
+    if (locationStatus != PermissionStatus.granted) {
+      return LocationPermissionResult(
+        hasLocation: false,
+        hasBackgroundLocation: false,
+        message: _getLocationErrorMessage(locationStatus),
+      );
+    }
+
+    debugPrint('📍 Basic location permission granted');
+
+    // Step 2: For iOS, request locationAlways (background location)
+    // This will trigger the iOS system dialog for "Always" location access
+    final backgroundStatus = await Permission.locationAlways.request();
+
+    debugPrint('📍 Background location status: $backgroundStatus');
+
+    return LocationPermissionResult(
+      hasLocation: true,
+      hasBackgroundLocation: backgroundStatus == PermissionStatus.granted,
+      message: _getBackgroundLocationMessage(backgroundStatus),
+    );
+  }
+
+  /// Android-specific location permission request
+  static Future<LocationPermissionResult> _requestAndroidLocationPermissions() async {
+    // Request basic location permission first
+    final locationStatus = await Permission.location.request();
+
+    if (locationStatus != PermissionStatus.granted) {
+      return LocationPermissionResult(
+        hasLocation: false,
+        hasBackgroundLocation: false,
+        message: _getLocationErrorMessage(locationStatus),
+      );
+    }
+
+    // Request background location permission for Android
+    final backgroundStatus = await Permission.locationAlways.request();
+
+    return LocationPermissionResult(
+      hasLocation: true,
+      hasBackgroundLocation: backgroundStatus == PermissionStatus.granted,
+      message: _getBackgroundLocationMessage(backgroundStatus),
+    );
+  }
+
+
 
   /// Check if all required permissions are granted
   static Future<bool> hasAllPermissions() async {
