@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Untitled3</string>
+	<string>Service</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>untitled3</string>
+	<string>service</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -24,6 +26,14 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs background location access for continuous tracking</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -41,25 +51,27 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 
-	<!-- Add before </dict> -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs location access to track your position</string>
-
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app needs location access to track your activities</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app needs location access to track your position in the background</string>
+    <string>This app needs background location access to track activities even when closed</string>
 
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app needs background location access for continuous tracking</string>
+    <!-- Add these to your ios/Runner/Info.plist file -->
+    <!-- Make sure they are inside the main <dict> tag -->
 
-    <!-- For background location -->
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>location</string>
-    </array>
+    <!-- Required for iOS 11+ -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app needs access to your location to track your activities and provide location-based features.</string>
+
+
+
+
+    <!-- For iOS 14+ if you need precise location -->
+    <key>NSLocationTemporaryUsageDescriptionDictionary</key>
+    <dict>
+        <key>PreciseLocationUsageDescription</key>
+        <string>This app needs your precise location to accurately track your activities.</string>
+    </dict>
 </dict>
 </plist>
